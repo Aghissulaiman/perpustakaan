@@ -14,13 +14,20 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #ffff;
     --foreground: #ededed;
   }
 }
 
-body {
+/* Style utama body dan halaman */
+html, body {
+  height: 100%;              /* pastikan body setinggi viewport */
+  margin: 0;                 /* hilangkan margin default */
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+
+  overflow-x: hidden;        /* hilangkan scroll horizontal */
+  overflow-y: auto;          /* scroll vertikal muncul hanya kalau konten lebih tinggi */
+  overscroll-behavior: contain; /* stop scroll “lebih” saat sudah mentok */
 }
