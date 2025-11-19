@@ -1,24 +1,19 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, LayoutDashboard, BookOpen, CalendarCheck } from "lucide-react";
+import { Menu, X, LayoutDashboard, BookOpen, CalendarCheck, Plus } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 export default function NavbarAdmin() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
 
-    const userJson = localStorage.getItem("user");
-    if (userJson) setUser(JSON.parse(userJson));
-
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  if (!user || user.role !== "admin") return null; // hanya admin yang bisa lihat navbar ini
 
   return (
     <nav
@@ -62,12 +57,17 @@ export default function NavbarAdmin() {
             <BookOpen size={18} /> Buku
           </Link>
 
+          {/* Tombol Tambah Buku */}
+          <Link
+            href="/admin/dashboard/tambahbuku"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition-all duration-300"
+          >
+            <Plus size={16} /> Tambah Buku
+          </Link>
+
           {/* Tombol Logout */}
           <button
-            onClick={() => {
-              localStorage.removeItem("user");
-              window.location.href = "/login";
-            }}
+            onClick={() => signOut({ callbackUrl: "/" })}
             className="ml-4 px-4 py-1.5 rounded-full bg-red-100 text-red-700 hover:bg-red-200 transition-all duration-300"
           >
             Logout
@@ -97,11 +97,16 @@ export default function NavbarAdmin() {
               Buku
             </Link>
 
+            <Link
+              href="/admin/dashboard/tambahbuku"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition-all duration-300"
+            >
+              <Plus size={16} /> Tambah Buku
+            </Link>
+
             <button
-              onClick={() => {
-                localStorage.removeItem("user");
-                window.location.href = "/login";
-              }}
+              onClick={() => signOut({ callbackUrl: "/" })}
               className="mt-4 px-4 py-2 rounded-full bg-red-100 text-red-700 hover:bg-red-200 transition-all duration-300"
             >
               Logout

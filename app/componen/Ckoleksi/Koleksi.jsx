@@ -2,11 +2,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getKoleksiBuku } from "@/app/lib/actions";
+import { useSearchParams } from "next/navigation";
 
-export default function DaftarBuku() {
+export default function Koleksi() {
   const [books, setBooks] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("Semua");
   const categories = ["Semua", "Jurusan", "Umum", "Novel"];
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
 
   useEffect(() => {
     async function fetchBooks() {
@@ -20,43 +23,56 @@ export default function DaftarBuku() {
     fetchBooks();
   }, []);
 
-  const filteredBooks =
-    selectedCategory === "Semua"
-      ? books
-      : books.filter((b) => b.category === selectedCategory);
+  // Filter berdasarkan kategori dan search
+  let filteredBooks = selectedCategory === "Semua"
+    ? books
+    : books.filter((b) => b.category === selectedCategory);
 
-  // Selalu batasi 12 item saja
-  const displayedBooks = filteredBooks.slice(0, 12);
+  if (searchQuery) {
+    filteredBooks = filteredBooks.filter((book) =>
+      book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      book.author.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }
 
   return (
-    <section
-      className="py-28 px-6 md:px-16 bg-gray-50 min-h-screen"
-      id="koleksi"
-    >
-      <h2 className="text-xl md:text-2xl font-semibold text-blue-700 mb-8 text-left border-l-4 border-blue-500 pl-3">
-        Daftar Buku Tarpustaka
-      </h2>
+    <section className="py-28 px-6 md:px-16 bg-gray-50 min-h-screen">
+      {/* Judul */}
+      <div className="flex items-center justify-between mb-10">
+        <h2 className="text-xl md:text-2xl font-semibold text-blue-700 border-l-4 border-blue-500 pl-3">
+          Semua Koleksi Buku
+        </h2>
 
-      {/* Filter kategori */}
-      <div className="flex flex-wrap justify-start gap-3 mb-10">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setSelectedCategory(cat)}
-            className={`px-4 py-2 rounded-full text-sm font-medium border transition-all duration-300 ${
-              selectedCategory === cat
-                ? "bg-blue-600 text-white border-blue-600"
-                : "bg-white text-gray-700 border-gray-200 hover:bg-blue-50"
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
+        <Link
+          href="/home"
+          className="text-blue-600 hover:underline text-sm"
+        >
+          ← Kembali
+        </Link>
       </div>
 
-      {/* Grid */}
+      {/* Filter kategori - hanya tampil jika tidak ada search query */}
+      {!searchQuery && (
+        <div className="flex flex-wrap justify-start gap-3 mb-10">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-2 rounded-full text-sm font-medium border transition-all duration-300 ${
+                selectedCategory === cat
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white text-gray-700 border-gray-200 hover:bg-blue-50"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Grid seluruh buku */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {displayedBooks.map((book) => (
+        {filteredBooks.map((book) => (
           <div
             key={book.id}
             className="bg-white rounded-2xl shadow hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100"
@@ -99,20 +115,8 @@ export default function DaftarBuku() {
       {/* Jika kosong */}
       {filteredBooks.length === 0 && (
         <p className="text-center text-gray-500 mt-10">
-          Tidak ada buku di kategori ini.
+          {searchQuery ? `Tidak ada buku yang cocok dengan "${searchQuery}".` : "Tidak ada buku di kategori ini."}
         </p>
-      )}
-
-      {/* Tombol lihat semua */}
-      {filteredBooks.length > 12 && (
-        <div className="flex justify-center mt-10">
-          <Link
-            href={`/home/koleksi`} // halaman baru
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-          >
-            Lihat Semua
-          </Link>
-        </div>
       )}
     </section>
   );

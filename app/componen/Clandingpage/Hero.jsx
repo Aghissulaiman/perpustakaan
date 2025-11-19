@@ -18,7 +18,7 @@ export default function Hero() {
         transition={{ duration: 0.8 }}
         className="relative z-10 flex-1 text-center md:text-left"
       >
-        <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-3">
+        <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-3 -mt-20">
           Selamat Datang di{" "}
           <span className="text-blue-600">Perpustakaan TB</span>
         </h1>
@@ -29,7 +29,7 @@ export default function Hero() {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
           <Link
-            href="#koleksi"
+            href="/login"
             className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-500 transition-all shadow-md"
           >
             Lihat Koleksi
@@ -54,7 +54,7 @@ export default function Hero() {
           <img
             src="/Hero1.png"
             alt="Ilustrasi Buku"
-            className="w-full h-auto drop-shadow-xl rounded-2xl border border-blue-100"
+            className="w-full h-auto drop-shadow-xl rounded-2xl -mt-25"
           />
           <div className="absolute -z-10 top-6 left-6 w-full h-full rounded-2xl bg-blue-200/30 blur-3xl"></div>
         </div>

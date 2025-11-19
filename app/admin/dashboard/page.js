@@ -7,8 +7,8 @@ import { withAdmin } from "@/app/lib/withAdmin";
 function DashboardPage() {
   return (
     <>
-        <NavbarAdmin/>
-        <Dashboard />
+      <NavbarAdmin/>
+      <Dashboard />
     </>
   );
 }

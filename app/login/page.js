@@ -1,46 +1,49 @@
 "use client";
+
+
 import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { signIn, getSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";   // ✅ tambahkan ini
+import Link from "next/link";     // ✅ tambahkan ini
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const formData = new FormData(e.target);
+    const email = e.target.email.value;
+    const password = e.target.password.value;
 
-    try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        body: formData,
-      });
+    const res = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        // Simpan data user ke localStorage
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        alert(`Selamat datang, ${data.user.username}!`);
-
-        // Redirect berdasarkan role
-        if (data.user.role === "admin") {
-          window.location.href = "/admin/dashboard";
-        } else {
-          window.location.href = "/home";
-        }
-      } else {
-        alert(data.error || "Email atau password salah!");
-      }
-    } catch (err) {
-      console.error("Error saat login:", err);
-      alert("Terjadi kesalahan saat login.");
-    } finally {
+    if (res?.error) {
+      alert("Email atau password salah!");
       setLoading(false);
+      return;
     }
+
+    // Ambil session menggunakan getSession
+    const session = await getSession();
+    const role = session?.user?.role;
+
+    // Redirect sesuai role
+    if (role === "admin") {
+      router.push("/admin/dashboard");
+    } else if (role === "guru") {
+      router.push("/guru/dashboard");
+    } else {
+      router.push("/home");
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -54,7 +57,7 @@ export default function LoginPage() {
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
       <div className="relative z-10 flex rounded-2xl overflow-hidden backdrop-blur-lg border border-white/20 bg-white/10 shadow-2xl w-[850px] h-[500px] text-white">
-        {/* Kiri (gambar ilustrasi) */}
+        
         <div className="w-[35%] bg-blue-900/40 flex flex-col items-center justify-center p-6 border-r border-white/20">
           <Image
             src="/login-register4.jpg"
@@ -68,7 +71,6 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Kanan (form login) */}
         <div className="w-[65%] px-10 py-8 flex flex-col justify-center">
           <h2 className="text-3xl font-bold mb-6 text-white">Masuk Akun</h2>
 
@@ -95,17 +97,7 @@ export default function LoginPage() {
               />
             </div>
 
-            <div className="flex items-center justify-between text-sm mt-2">
-              <label className="flex items-center space-x-2">
-                <input type="checkbox" className="accent-blue-500 rounded" />
-                <span className="text-blue-100">Ingat saya</span>
-              </label>
-              <Link href="#" className="text-blue-300 hover:underline">
-                Lupa password?
-              </Link>
-            </div>
-
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex justify-end mt-6">
               <button
                 type="submit"
                 disabled={loading}

@@ -1,33 +1,55 @@
 @import "tailwindcss";
 
+/* Default (light mode) */
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Dark mode */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #ffff;
-    --foreground: #ededed;
-  }
-}
-
-/* Style utama body dan halaman */
+/* Halaman utama mengikuti variable */
 html, body {
-  height: 100%;              /* pastikan body setinggi viewport */
-  margin: 0;                 /* hilangkan margin default */
+  height: 100%;
+  margin: 0;
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 
-  overflow-x: hidden;        /* hilangkan scroll horizontal */
-  overflow-y: auto;          /* scroll vertikal muncul hanya kalau konten lebih tinggi */
-  overscroll-behavior: contain; /* stop scroll “lebih” saat sudah mentok */
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* DARK MODE OVERRIDE UNTUK ELEMENT TERTENTU */
+.dark .bg-white {
+  background-color: #1a1a1a !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: #111827 !important;
+}
+
+.dark .text-gray-800 {
+  color: #ededed !important;
+}
+
+.dark .text-gray-700 {
+  color: #d1d5db !important;
+}
+
+.dark .text-gray-600 {
+  color: #9ca3af !important;
+}
+
+.dark .text-gray-500 {
+  color: #6b7280 !important;
+}
+
+.dark .border-gray-100 {
+  border-color: #374151 !important;
 }

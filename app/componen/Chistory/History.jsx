@@ -69,7 +69,7 @@ export default function History() {
     <div className=" min-h-screen bg-gray-100 p-6">
       <div className="max-w-6xl mx-auto mt-30 bg-white shadow-2xl rounded-xl p-8">
         <h1 className="text-3xl font-extrabold mb-6 text-blue-800 border-b-4 border-blue-600 pb-2">
-          Riwayat Peminjaman Saya 📚
+          Riwayat Peminjaman Saya 
         </h1>
 
         {/* Notifikasi panduan umum pengambilan buku */}
@@ -125,8 +125,8 @@ export default function History() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-100">
                 {history.map((item) => {
-                  const batasKembali = new Date(item.batas_pengembalian);
-                  const tanggalKembali = item.tanggal_kembali
+                  const batasKembali = new Date(item.tanggal_kembali);
+                  const tanggalKembali = item.tanggal_kembali && item.status.toLowerCase() === "dikembalikan"
                     ? new Date(item.tanggal_kembali)
                     : null;
                   
