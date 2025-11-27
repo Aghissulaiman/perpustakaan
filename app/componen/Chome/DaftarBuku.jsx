@@ -1,119 +1,116 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { getKoleksiBuku } from "@/app/lib/actions";
 
 export default function DaftarBuku() {
   const [books, setBooks] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("Semua");
-  const categories = ["Semua", "Jurusan", "Umum", "Novel"];
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchBooks() {
+    const fetchBooks = async () => {
       try {
-        const data = await getKoleksiBuku();
+        const response = await fetch("/api/books");
+        if (!response.ok) {
+          throw new Error("Failed to fetch books");
+        }
+        const data = await response.json();
         setBooks(data);
-      } catch (error) {
-        console.error("Gagal mengambil data buku:", error);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+
     fetchBooks();
   }, []);
 
-  const filteredBooks =
-    selectedCategory === "Semua"
-      ? books
-      : books.filter((b) => b.category === selectedCategory);
+  if (loading) {
+    return (
+      <section className="py-12 px-6 md:px-16">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-semibold text-blue-800 mb-8 text-left border-l-4 border-blue-500 pl-4">
+            Daftar Buku
+          </h2>
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p className="mt-4 text-gray-600">Memuat daftar buku...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
-  // Selalu batasi 12 item saja
-  const displayedBooks = filteredBooks.slice(0, 12);
+  if (error) {
+    return (
+      <section className="py-12 px-6 md:px-16">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-semibold text-blue-800 mb-8 text-left border-l-4 border-blue-500 pl-4">
+            Daftar Buku
+          </h2>
+          <div className="text-center py-12">
+            <p className="text-red-600">Error: {error}</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section
-      className="py-28 px-6 md:px-16 bg-gray-50 min-h-screen"
-      id="koleksi"
-    >
-      <h2 className="text-xl md:text-2xl font-semibold text-blue-700 mb-8 text-left border-l-4 border-blue-500 pl-3">
-        Daftar Buku Tarpustaka
-      </h2>
+    <section className="py-12 px-6 md:px-16">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-2xl md:text-3xl font-semibold text-blue-800 mb-8 text-left border-l-4 border-blue-500 pl-4">
+          Daftar Buku
+        </h2>
 
-      {/* Filter kategori */}
-      <div className="flex flex-wrap justify-start gap-3 mb-10">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setSelectedCategory(cat)}
-            className={`px-4 py-2 rounded-full text-sm font-medium border transition-all duration-300 ${
-              selectedCategory === cat
-                ? "bg-blue-600 text-white border-blue-600"
-                : "bg-white text-gray-700 border-gray-200 hover:bg-blue-50"
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
-
-      {/* Grid */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {displayedBooks.map((book) => (
-          <div
-            key={book.id}
-            className="bg-white rounded-2xl shadow hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100"
-          >
-            <div className="w-full h-56 bg-gray-100 flex items-center justify-center overflow-hidden">
-              {book.gambar ? (
-                <img
-                  src={book.gambar}
-                  alt={book.title}
-                  className="object-cover w-full h-full"
-                />
-              ) : (
-                <span className="text-5xl">📘</span>
-              )}
-            </div>
-
-            <div className="p-5">
-              <h3 className="text-lg font-semibold text-gray-800 mb-1">
-                {book.title}
-              </h3>
-              <p className="text-sm text-gray-500 mb-2">by {book.author}</p>
-              <span className="inline-block text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full mb-4">
-                {book.category}
-              </span>
-              <p className="text-sm text-gray-600 mb-4 line-clamp-3">
-                {book.deskripsi}
-              </p>
-
-              <Link
-                href={`/home/detail/${book.id}`}
-                className="block text-center w-full text-sm px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-              >
-                Lihat Detail
-              </Link>
-            </div>
+        {books.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-600">Tidak ada buku tersedia.</p>
           </div>
-        ))}
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            {books.map((book) => (
+              <div
+                key={book.id}
+                className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
+              >
+                {/* Link ke detail */}
+                <Link href={`/home/detail/${book.id}`}>
+                  <div className="w-full h-44 bg-gray-100 flex items-center justify-center overflow-hidden">
+                    {book.image ? (
+                      <img
+                        src={book.image}
+                        // src={book.image.startsWith('http') ? book.image : `/${book.image.replace(/^\/+/, '')}`}
+                        alt={book.title}
+                        className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <span className="text-4xl">📘</span>
+                    )}
+                  </div>
+                </Link>
+
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-800 mb-1 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                    {book.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-2">{book.author}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                      {book.category}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      Stok: {book.stok}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-
-      {/* Jika kosong */}
-      {filteredBooks.length === 0 && (
-        <p className="text-center text-gray-500 mt-10">
-          Tidak ada buku di kategori ini.
-        </p>
-      )}
-
-      {/* Tombol lihat semua */}
-      {filteredBooks.length > 12 && (
-        <div className="flex justify-center mt-10">
-          <Link
-            href={`/home/koleksi`} // halaman baru
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-          >
-            Lihat Semua
-          </Link>
-        </div>
-      )}
     </section>
   );
 }

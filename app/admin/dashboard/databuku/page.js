@@ -7,8 +7,9 @@ import { withAdmin } from "@/app/lib/withAdmin";
 function Databuku() {
   return (
     <>
-      <NavbarAdmin />
-      <TabelBuku />
+      <NavbarAdmin>
+        <TabelBuku />
+      </NavbarAdmin>
     </>
   );
 }

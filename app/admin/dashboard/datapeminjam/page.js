@@ -7,8 +7,10 @@ import { withAdmin } from "@/app/lib/withAdmin";
 function Datapeminjam() {
   return (
     <>
-      <NavbarAdmin />
+      <NavbarAdmin>
+
       <TabelPeminjam />
+      </NavbarAdmin>
     </>
   );
 }

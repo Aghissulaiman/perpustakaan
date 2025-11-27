@@ -78,9 +78,9 @@ export default function Koleksi() {
             className="bg-white rounded-2xl shadow hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100"
           >
             <div className="w-full h-56 bg-gray-100 flex items-center justify-center overflow-hidden">
-              {book.gambar ? (
+              {book.image ? (
                 <img
-                  src={book.gambar}
+                  src={book.image}
                   alt={book.title}
                   className="object-cover w-full h-full"
                 />

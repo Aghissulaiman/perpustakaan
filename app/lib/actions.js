@@ -1,4 +1,3 @@
-
 "use server";
 
 import bcrypt from "bcryptjs";
@@ -12,15 +11,16 @@ export async function registerUser(formData) {
   const role = formData.get("role");
   const nis = formData.get("nis") || null;
   const kelas = formData.get("kelas") || null;
+  const jurusan = formData.get("jurusan") || null;
   const nip = formData.get("nip") || null;
   const mapel = formData.get("mapel") || null;
 
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   await pool.execute(
-    `INSERT INTO users (username, email, password, role, nis, kelas, nip, mapel)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [username, email, hashedPassword, role, nis, kelas, nip, mapel]
+    `INSERT INTO users (username, email, password, role, nis, kelas, jurusan, nip, mapel)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [username, email, hashedPassword, role, nis, kelas, jurusan, nip, mapel]
   );
 
   return { message: "Register berhasil" };
@@ -68,7 +68,7 @@ export async function getKoleksiBuku() {
 export async function getUserData(userId) {
   try {
     const [rows] = await pool.execute(
-      "SELECT id, username, email, role, nis, kelas, nip, mapel FROM users WHERE id = ?",
+      "SELECT id, username, email, role, nis, kelas, jurusan, nip, mapel FROM users WHERE id = ?",
       [userId]
     );
     return rows.length ? rows[0] : null;
@@ -123,7 +123,7 @@ export async function pinjamBuku(formData) {
 export async function getHistoryPeminjaman(userId) {
   try {
     const [rows] = await pool.execute(
-      `SELECT 
+      `SELECT
          p.id,
          b.title AS judul,
          b.author AS penulis,
@@ -221,8 +221,8 @@ export async function updateBook(formData) {
   const image = formData.get("image") || null;
 
   await pool.execute(
-    `UPDATE koleksi_buku 
-     SET title=?, author=?, category=?, deskripsi=?, stok=?, image=? 
+    `UPDATE koleksi_buku
+     SET title=?, author=?, category=?, deskripsi=?, stok=?, image=?
      WHERE id=?`,
     [title, author, category, deskripsi, stok, image, id]
   );
@@ -246,7 +246,7 @@ export async function deletePeminjaman(id) {
 export async function getAllPeminjaman() {
   try {
     const [rows] = await pool.execute(
-      `SELECT 
+      `SELECT
          p.id,
          u.username,
          u.nis,
@@ -264,5 +264,16 @@ export async function getAllPeminjaman() {
   } catch (error) {
     console.error("Gagal ambil data peminjaman:", error);
     return [];
+  }
+}
+
+// GET BOOK BY ID
+export async function getBookById(id) {
+  try {
+    const [rows] = await pool.execute("SELECT * FROM koleksi_buku WHERE id = ?", [id]);
+    return rows.length ? rows[0] : null;
+  } catch (error) {
+    console.error("Failed to fetch book by id:", error);
+    return null;
   }
 }

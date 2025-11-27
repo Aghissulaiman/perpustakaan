@@ -145,13 +145,46 @@ export default function RegisterPage() {
 
                   <div>
                     <label className="text-sm text-blue-100">Kelas</label>
-                    <input
-                      type="text"
+                    <select
                       name="kelas"
-                      placeholder="Contoh: X PPLG 5"
                       required
-                      className="w-full p-2.5 rounded-lg bg-white/10 text-white placeholder-blue-200 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    />
+                      className="w-full p-2.5 rounded-lg bg-white/10 text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    >
+                      <option value="" className="text-black">Pilih Kelas</option>
+                      <option value="10" className="text-black">10</option>
+                      <option value="11" className="text-black">11</option>
+                      <option value="12" className="text-black">12</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <label className="text-sm text-blue-100">Jurusan</label>
+                    <select
+                      name="jurusan"
+                      required
+                      className="w-full p-2.5 rounded-lg bg-white/10 text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    >
+                      <option value="" className="text-black">Pilih Jurusan</option>
+                      <option value="RPL 1" className="text-black">RPL 1</option>
+                      <option value="RPL 2" className="text-black">RPL 2</option>
+                      <option value="RPL 3" className="text-black">RPL 3</option>
+                      <option value="RPL 4" className="text-black">RPL 4</option>
+                      <option value="RPL 5" className="text-black">RPL 5</option>
+                      <option value="Animasi 1" className="text-black">Animasi 1</option>
+                      <option value="Animasi 2" className="text-black">Animasi 2</option>
+                      <option value="Animasi 3" className="text-black">Animasi 3</option>
+                      <option value="TKJ 1" className="text-black">TKJ 1</option>
+                      <option value="TKJ 2" className="text-black">TKJ 2</option>
+                      <option value="TKJ 3" className="text-black">TKJ 3</option>
+                      <option value="TKJ 4" className="text-black">TKJ 4</option>
+                      <option value="BC 1" className="text-black">BC 1</option>
+                      <option value="BC 2" className="text-black">BC 2</option>
+                      <option value="BC 3" className="text-black">BC 3</option>
+                      <option value="TE 1" className="text-black">TE 1</option>
+                      <option value="TE 2" className="text-black">TE 2</option>
+                    </select>
                   </div>
                 </div>
               </>

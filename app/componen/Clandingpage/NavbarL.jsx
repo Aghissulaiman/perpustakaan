@@ -55,7 +55,7 @@ export default function Navbar() {
             </Link>
             <Link
               href="/register"
-              className="px-5 py-2 rounded-full font-semibold bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-purple-600 hover:to-blue-600 hover:shadow-xl hover:scale-105 transition-all duration-300"
+              className="px-5 py-2 rounded-full font-semibold bg-gradient-to-r from-blue-600 to-blue-400 text-white hover:from-blue-600 hover:to-blue-600 hover:shadow-xl hover:scale-105 transition-all duration-300"
             >
               Daftar
             </Link>
