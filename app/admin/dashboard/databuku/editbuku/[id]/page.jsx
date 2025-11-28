@@ -1,10 +1,10 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { getBookById, updateBook } from "@/app/lib/actions";
 
 export default function EditBukuPage({ params }) {
-  const { id } = params;
+  const { id } = use(params);
   const [formData, setFormData] = useState({
     title: "",
     author: "",
