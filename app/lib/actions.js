@@ -142,6 +142,7 @@ export async function getHistoryPeminjaman(userId) {
          b.title AS judul,
          b.author AS penulis,
          b.category AS kategori,
+         b.image AS gambar,
          p.jumlah,
          p.tanggal_pinjam,
          p.tanggal_kembali,
