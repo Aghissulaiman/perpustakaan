@@ -6,22 +6,22 @@ import { getHistoryPeminjaman } from "@/app/lib/actions";
 
 export default function History() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [history, setHistory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (status === "loading") return;
+
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+
     async function fetchHistory() {
-      const userJson = localStorage.getItem("user");
-
-      if (!userJson) {
-        router.push("/login");
-        return;
-      }
-
       try {
-        const loggedInUser = JSON.parse(userJson);
-        const userId = loggedInUser.id;
+        const userId = session.user.id;
 
         const data = await getHistoryPeminjaman(userId);
 
@@ -35,7 +35,7 @@ export default function History() {
       }
     }
     fetchHistory();
-  }, [router]);
+  }, [router, session, status]);
 
   // --- Loading State, Error State, dan Header (sama seperti sebelumnya) ---
   if (loading) {
@@ -66,7 +66,7 @@ export default function History() {
   const isHistoryEmpty = history && history.length === 0;
 
   return (
-    <div className=" min-h-screen bg-gray-100 p-6">
+    <div className="-mt-50 min-h-screen bg-gray-100 p-6">
       <div className="max-w-6xl mx-auto mt-30 bg-white shadow-2xl rounded-xl p-8">
         <h1 className="text-3xl font-extrabold mb-6 text-blue-800 border-b-4 border-blue-600 pb-2">
           Riwayat Peminjaman Saya 

@@ -11,6 +11,7 @@ export default function FormTambahBuku({ redirectUrl = "/admin/dashboard/databuk
     deskripsi: "",
     stok: "",
     image: "",
+    isbn: "", // ➕ Tambah ISBN
   });
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
@@ -48,7 +49,7 @@ export default function FormTambahBuku({ redirectUrl = "/admin/dashboard/databuk
         </h2>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Preview Gambar Besar di Kiri */}
+          {/* Preview Gambar */}
           <div className="flex justify-center items-start md:col-span-1">
             {preview ? (
               <img
@@ -62,7 +63,7 @@ export default function FormTambahBuku({ redirectUrl = "/admin/dashboard/databuk
             )}
           </div>
 
-          {/* Form Input di Kanan */}
+          {/* Form Input */}
           <div className="md:col-span-2 flex flex-col gap-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <InputField label="Judul Buku" name="title" value={formData.title} onChange={handleChange} required />
@@ -90,7 +91,19 @@ export default function FormTambahBuku({ redirectUrl = "/admin/dashboard/databuk
               />
             </div>
 
-            {/* Tombol Aksi */}
+            {/* ISBN Tambahan */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <InputField
+                label="ISBN"
+                name="isbn"
+                placeholder="9786020321234"
+                value={formData.isbn}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            {/* Tombol */}
             <div className="flex gap-4 mt-4">
               <button
                 type="submit"
@@ -114,9 +127,7 @@ export default function FormTambahBuku({ redirectUrl = "/admin/dashboard/databuk
   );
 }
 
-// ===================
 // COMPONENTS
-// ===================
 function InputField({ label, name, type = "text", required, value, onChange, placeholder }) {
   return (
     <div className="flex flex-col gap-2">
@@ -143,7 +154,7 @@ function TextAreaField({ label, name, value, onChange }) {
         value={value}
         onChange={onChange}
         rows="5"
-        className="h-32 p-3 border border-gray-300 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base"
+        className="h-32 p-3 border border-gray-300 rounded-xl bg:white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base"
       />
     </div>
   );
@@ -158,7 +169,7 @@ function SelectField({ label, name, value, onChange, options, required }) {
         value={value}
         onChange={onChange}
         required={required}
-        className="h-14 p-3 border border-gray-300 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base"
+        className="h-14 p-3 border border-gray-300 rounded-xl bg:white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base"
       >
         <option value="">Pilih kategori...</option>
         {options.map((opt, i) => (

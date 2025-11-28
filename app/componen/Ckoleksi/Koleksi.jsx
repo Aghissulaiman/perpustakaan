@@ -93,7 +93,10 @@ export default function Koleksi() {
               <h3 className="text-lg font-semibold text-gray-800 mb-1">
                 {book.title}
               </h3>
-              <p className="text-sm text-gray-500 mb-2">by {book.author}</p>
+              <p className="text-sm text-gray-500 mb-1">by {book.author}</p>
+              {book.isbn && (
+                <p className="text-xs text-gray-400 mb-2">ISBN: {book.isbn}</p>
+              )}
               <span className="inline-block text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full mb-4">
                 {book.category}
               </span>

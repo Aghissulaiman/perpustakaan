@@ -22,9 +22,18 @@ export async function registerUser(formData) {
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [username, email, hashedPassword, role, nis, kelas, jurusan, nip, mapel]
   );
+  const [checkEmail] = await pool.execute(
+  "SELECT id FROM users WHERE email = ?",
+  [email]
+);
+if (checkEmail.length) {
+  throw new Error("Email sudah digunakan!");
+}
+
 
   return { message: "Register berhasil" };
 }
+
 
 // ================= LOGIN USER =================
 export async function loginUser(formData) {
@@ -66,6 +75,11 @@ export async function getKoleksiBuku() {
 
 // ================= GET USER DATA =================
 export async function getUserData(userId) {
+  if (!userId || isNaN(parseInt(userId))) {
+    console.error("UserId tidak valid:", userId);
+    return null;
+  }
+
   try {
     const [rows] = await pool.execute(
       "SELECT id, username, email, role, nis, kelas, jurusan, nip, mapel FROM users WHERE id = ?",
@@ -194,11 +208,12 @@ export async function addBook(formData) {
   const deskripsi = formData.get("deskripsi") || null;
   const stok = parseInt(formData.get("stok")) || 0;
   const image = formData.get("image") || null;
+  const isbn = formData.get("isbn") || null;
 
   await pool.execute(
-    `INSERT INTO koleksi_buku (title, author, category, deskripsi, stok, image)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-    [title, author, category, deskripsi, stok, image]
+    `INSERT INTO koleksi_buku (title, author, category, deskripsi, stok, image, isbn)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [title, author, category, deskripsi, stok, image, isbn]
   );
 
   return { success: "Buku baru berhasil ditambahkan!" };
@@ -219,12 +234,13 @@ export async function updateBook(formData) {
   const deskripsi = formData.get("deskripsi") || null;
   const stok = parseInt(formData.get("stok")) || 0;
   const image = formData.get("image") || null;
+  const isbn = formData.get("isbn") || null;
 
   await pool.execute(
     `UPDATE koleksi_buku
-     SET title=?, author=?, category=?, deskripsi=?, stok=?, image=?
+     SET title=?, author=?, category=?, deskripsi=?, stok=?, image=?, isbn=?
      WHERE id=?`,
-    [title, author, category, deskripsi, stok, image, id]
+    [title, author, category, deskripsi, stok, image, isbn, id]
   );
 
   return { success: "Data buku berhasil diperbarui!" };
