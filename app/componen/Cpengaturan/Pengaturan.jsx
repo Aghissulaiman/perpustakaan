@@ -238,12 +238,4 @@ function PengaturanContent() {
   );
 }
 
-function PengaturanPage() {
-  return (
-    <SessionProvider>
-      <PengaturanContent />
-    </SessionProvider>
-  );
-}
-
-export default PengaturanPage;
+export default PengaturanContent;

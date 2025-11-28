@@ -1,4 +1,4 @@
-import PeminjamanForm from "@/app/componen/Cpeminjaman/PeminjamanForn";
+import PeminjamanForm from "@/app/componen/Cpeminjaman/PeminjamanForm";
 
 export default function peminjaman(){
     return(
