@@ -5,7 +5,9 @@ export default function detail(){
     return(
         <>
         <Navbar_Sidebar>
+            <div className="-mt-28">
         <DetailBuku/>
+            </div>
         </Navbar_Sidebar>
         </>
     )

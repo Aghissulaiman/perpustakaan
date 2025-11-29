@@ -5,7 +5,9 @@ export default function PengaturanPage() {
   return (
     <>
       <Navbar_Sidebar>
-      <Pengaturan />
+        <div className="-mt-28">
+          <Pengaturan />
+        </div>
       </Navbar_Sidebar>
     </>
   )

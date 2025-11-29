@@ -1,52 +1,59 @@
 "use client";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { getKoleksiBuku } from "@/app/lib/actions";
-import { useSearchParams } from "next/navigation";
 
-export default function Koleksi() {
+import { useState, useEffect } from "react";
+import Link from "next/link";
+
+export default function KategoriBuku() {
+  const [categories, setCategories] = useState([]);
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("Semua");
-  const categories = ["Semua", "Jurusan", "Umum", "Novel"];
-  const searchParams = useSearchParams();
-  const searchQuery = searchParams.get("search") || "";
 
   useEffect(() => {
-    async function fetchBooks() {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const data = await getKoleksiBuku();
-        setBooks(data);
-      } catch (error) {
-        console.error("Gagal mengambil data buku:", error);
-        setError("Gagal mengambil data buku");
+        
+        // Fetch books
+        const booksResponse = await fetch("/api/books");
+        if (!booksResponse.ok) {
+          throw new Error("Failed to fetch books");
+        }
+        const booksData = await booksResponse.json();
+        setBooks(booksData);
+
+        // Extract unique categories from books
+        const uniqueCategories = [...new Set(booksData.map(book => book.category))].filter(Boolean);
+        setCategories(["Semua", ...uniqueCategories]);
+
+      } catch (err) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
-    }
-    fetchBooks();
+    };
+
+    fetchData();
   }, []);
 
-  // Filter berdasarkan kategori dan search
-  let filteredBooks = selectedCategory === "Semua"
-    ? books
-    : books.filter((b) => b.category === selectedCategory);
+  // Filter books based on selected category
+  const filteredBooks = selectedCategory === "Semua" 
+    ? books 
+    : books.filter(book => book.category === selectedCategory);
 
-  if (searchQuery) {
-    filteredBooks = filteredBooks.filter((book) =>
-      book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      book.author.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }
+  // Count books per category
+  const getBookCountByCategory = (category) => {
+    if (category === "Semua") return books.length;
+    return books.filter(book => book.category === category).length;
+  };
 
   if (loading) {
     return (
       <div className="p-6 max-w-7xl mx-auto">
         <div className="text-center py-20">
           <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
-          <p className="mt-4 text-gray-600 font-medium">Memuat daftar buku...</p>
+          <p className="mt-4 text-gray-600 font-medium">Memuat kategori buku...</p>
         </div>
       </div>
     );
@@ -79,48 +86,72 @@ export default function Koleksi() {
           <div className="flex items-center gap-3">
             <div className="w-1 h-10 bg-blue-600 rounded-full"></div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Koleksi Buku</h1>
-              <p className="text-sm text-gray-600 mt-1">Temukan buku favorit Anda</p>
+              <h1 className="text-3xl font-bold text-gray-900">Kategori Buku</h1>
+              <p className="text-sm text-gray-600 mt-1">Jelajahi buku berdasarkan kategori</p>
             </div>
           </div>
 
-          {/* Total Books */}
+          {/* Total Categories */}
           <div className="flex items-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-xl shadow-lg">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
             </svg>
-            <span className="text-sm font-bold">{filteredBooks.length} Buku</span>
+            <span className="text-sm font-bold">{categories.length - 1} Kategori</span>
           </div>
         </div>
       </div>
 
-      {/* Filter kategori - hanya tampil jika tidak ada search query */}
-      {!searchQuery && (
-        <div className="flex flex-wrap justify-start gap-3 mb-10">
-          {categories.map((cat) => (
+      {/* Categories Filter */}
+      <div className="mb-8">
+        <div className="flex flex-wrap gap-3">
+          {categories.map((category) => (
             <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 rounded-full text-sm font-medium border transition-all duration-300 ${
-                selectedCategory === cat
-                  ? "bg-blue-600 text-white border-blue-600"
-                  : "bg-white text-gray-700 border-gray-200 hover:bg-blue-50"
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 border-2 ${
+                selectedCategory === category
+                  ? "bg-blue-600 text-white border-blue-600 shadow-lg transform scale-105"
+                  : "bg-white text-gray-700 border-gray-200 hover:border-blue-400 hover:bg-blue-50"
               }`}
             >
-              {cat}
+              <div className="flex items-center gap-2">
+                <span>{category}</span>
+                <span className={`text-xs px-2 py-1 rounded-full ${
+                  selectedCategory === category
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-100 text-gray-600"
+                }`}>
+                  {getBookCountByCategory(category)}
+                </span>
+              </div>
             </button>
           ))}
         </div>
-      )}
+      </div>
+
+      {/* Selected Category Info */}
+      <div className="mb-6">
+        <h2 className="text-xl font-bold text-gray-800 mb-2">
+          {selectedCategory === "Semua" ? "Semua Buku" : `Kategori: ${selectedCategory}`}
+        </h2>
+        <p className="text-gray-600">
+          Menampilkan {filteredBooks.length} buku dari {getBookCountByCategory(selectedCategory)} total
+        </p>
+      </div>
 
       {/* Books Grid */}
       {filteredBooks.length === 0 ? (
         <div className="text-center py-20">
           <div className="text-8xl mb-4">📚</div>
           <h3 className="text-xl font-bold text-gray-800 mb-2">
-            {searchQuery ? `Tidak ada buku yang cocok dengan "${searchQuery}"` : "Tidak ada buku di kategori ini"}
+            {selectedCategory === "Semua" ? "Belum Ada Buku" : `Tidak Ada Buku dalam ${selectedCategory}`}
           </h3>
-          <p className="text-gray-600">Coba cari dengan kata kunci lain atau pilih kategori berbeda</p>
+          <p className="text-gray-600">
+            {selectedCategory === "Semua" 
+              ? "Koleksi buku masih kosong" 
+              : `Tidak ada buku yang tersedia dalam kategori ${selectedCategory}`
+            }
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
@@ -146,7 +177,7 @@ export default function Koleksi() {
                     </div>
                   )}
                   
-                  {/* Stock Badge - assuming default stock if not provided */}
+                  {/* Stock Badge */}
                   <div className="absolute top-2 right-2">
                     <div className={`px-3 py-1 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm ${
                       book.stok > 0 
@@ -176,13 +207,8 @@ export default function Koleksi() {
                   </h3>
                   
                   <p className="text-xs text-gray-600 mb-3 line-clamp-1">
-                    by {book.author}
+                    {book.author}
                   </p>
-
-                  {/* ISBN if available */}
-                  {book.isbn && (
-                    <p className="text-xs text-gray-400 mb-2">ISBN: {book.isbn}</p>
-                  )}
 
                   {/* Category Tag */}
                   <div className="flex items-center justify-between">
@@ -193,11 +219,6 @@ export default function Koleksi() {
                       {book.category}
                     </span>
                   </div>
-
-                  {/* Description */}
-                  <p className="text-xs text-gray-600 mt-3 line-clamp-2">
-                    {book.deskripsi}
-                  </p>
                 </div>
               </div>
             </Link>

@@ -9,9 +9,10 @@ export default function home () {
     return(
         <>
         <Navbar_Sidebar>
-
+                        <div className="-mt-28">
         {/* <HeroH/> */}
-        <DaftarBuku/>
+        <DaftarBuku />
+            </div>
         <JadwalKontak/>
         <Footer/>
         </Navbar_Sidebar>

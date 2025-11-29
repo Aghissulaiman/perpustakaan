@@ -5,8 +5,9 @@ export default function peminjaman(){
     return(
         <>
         <Navbar_Sidebar>
-
+            <div className="-mt-28">
         <PeminjamanForm/>
+            </div>
         </Navbar_Sidebar>
         </>
     )

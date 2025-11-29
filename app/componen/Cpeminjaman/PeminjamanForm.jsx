@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { getBookById, getUserData, pinjamBuku } from "@/app/lib/actions";
+import { getBookById, getUserData, pinjamBuku, checkActiveLoans } from "@/app/lib/actions";
 
 export default function PeminjamanForm() {
   const { id } = useParams();
@@ -16,6 +16,8 @@ export default function PeminjamanForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState({ type: "", title: "", text: "" });
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState("");
   const [tanggalKembali, setTanggalKembali] = useState("");
 
   useEffect(() => {
@@ -201,6 +203,41 @@ export default function PeminjamanForm() {
               >
                 {modalMessage.type === "success" ? "Kembali ke Beranda" : "Tutup"}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full transform animate-scale-up">
+            <div className="p-6 rounded-t-2xl bg-gradient-to-r from-amber-500 to-orange-600">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-white">Konfirmasi Peminjaman</h3>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-700 mb-6 leading-relaxed">{confirmMessage}</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={closeConfirmModal}
+                  className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
+                >
+                  Tidak
+                </button>
+                <button
+                  onClick={handleConfirmSubmit}
+                  className="flex-1 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
+                  Ya, Lanjutkan
+                </button>
+              </div>
             </div>
           </div>
         </div>

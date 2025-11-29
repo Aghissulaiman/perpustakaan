@@ -1,19 +1,31 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { User, Mail, Badge, Shield } from "lucide-react"; // Ganti IdBadge → Badge
 
 export default function ProfileData() {
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userJson = localStorage.getItem("user");
-    if (userJson) {
-      const parsedUser = JSON.parse(userJson);
-      console.log("User data parsed:", parsedUser); // 🔍 Debug log
-      setUser(parsedUser);
+    if (status === "loading") return;
+
+    if (!session) {
+      router.push("/login");
+      return;
     }
-  }, []);
+
+    // Get user data from session
+    if (session.user) {
+      setUser(session.user);
+    }
+
+    setLoading(false);
+  }, [router, session, status]);
 
   if (!user || !user.username) {
     return (
@@ -71,6 +83,48 @@ export default function ProfileData() {
             <p className="font-medium capitalize">{user.role}</p>
           </div>
         </div>
+
+        {/* Additional fields for students */}
+        {user.kelas && (
+          <div className="flex items-center gap-2 p-3 bg-indigo-50 rounded-xl">
+            <Badge size={20} className="text-indigo-600" />
+            <div>
+              <p className="text-sm text-gray-500">Kelas</p>
+              <p className="font-medium">{user.kelas}</p>
+            </div>
+          </div>
+        )}
+
+        {user.jurusan && (
+          <div className="flex items-center gap-2 p-3 bg-teal-50 rounded-xl">
+            <Badge size={20} className="text-teal-600" />
+            <div>
+              <p className="text-sm text-gray-500">Jurusan</p>
+              <p className="font-medium">{user.jurusan}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Additional fields for teachers */}
+        {user.nip && (
+          <div className="flex items-center gap-2 p-3 bg-orange-50 rounded-xl">
+            <Badge size={20} className="text-orange-600" />
+            <div>
+              <p className="text-sm text-gray-500">NIP</p>
+              <p className="font-medium">{user.nip}</p>
+            </div>
+          </div>
+        )}
+
+        {user.mapel && (
+          <div className="flex items-center gap-2 p-3 bg-pink-50 rounded-xl">
+            <Badge size={20} className="text-pink-600" />
+            <div>
+              <p className="text-sm text-gray-500">Mata Pelajaran</p>
+              <p className="font-medium">{user.mapel}</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
